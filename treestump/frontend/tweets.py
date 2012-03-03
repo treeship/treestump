@@ -13,7 +13,10 @@
 import twitter
 import sys
 from venues import Foursquare
-from settings import *
+import os
+sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+
+
 
 cambridge_lat = 42.363
 cambridge_long = -71.084
