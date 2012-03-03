@@ -1,0 +1,19 @@
+# instructions: copy this as settings.py and add in your KEY information
+# IMPORTANT! don't commit your settings.py file!!!
+
+
+# Twitter
+TWITTER_CONSUMER_KEY = ''
+TWITTER_CONSUMER_SECRET = ''
+TWITTER_ACCESS_TOKEN = ''
+TWITTER_ACCESS_SECRET = ''
+
+
+# FourSquare
+FS_CLIENT_ID = ''
+FS_CLIENT_SECRET = ''
+
+
+# Patch
+PATCH_KEY = ''
+PATCH_SECRET = ''
