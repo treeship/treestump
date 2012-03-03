@@ -52,8 +52,14 @@ def parse_hashtags(text):
         idx = text.find('#', idx+1)
     return hashtags
 
+def good_tweets(hashtags):
+    max = sorted(hashtags.iteritems(), key=lambda (k,v): (v,k), reverse=True)[0]
+    results = twitter_call(max[0], None)
+    for s in results:
+        print s.user.screen_name, '\t', s.text, s.coordinates, s.location
+
 if __name__ == '__main__':
     if len(sys.argv) > 2:
-        popular_hashtags(float(sys.argv[1]), float(sys.argv[2]))
+        good_tweets(popular_hashtags(float(sys.argv[1]), float(sys.argv[2])))
     else:
-        popular_hashtags(cambridge_lat, cambridge_long)
+        good_tweets(popular_hashtags(cambridge_lat, cambridge_long))
