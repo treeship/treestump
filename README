@@ -4,3 +4,7 @@ HI
 Python libraries used
 
 
+pip install readability
+pip install requests
+
+

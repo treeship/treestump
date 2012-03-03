@@ -15,6 +15,7 @@ import sys
 from venues import Foursquare
 import os
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+from settings import *
 
 
 
@@ -60,6 +61,7 @@ def good_tweets(hashtags):
     results = twitter_call(max[0], None)
     for s in results:
         print s.user.screen_name, '\t', s.text, s.coordinates, s.location
+        
 
 if __name__ == '__main__':
     if len(sys.argv) > 2:
