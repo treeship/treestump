@@ -23,9 +23,13 @@ cambridge_lat = 42.363
 cambridge_long = -71.084
 radius = '10mi'
 
-def twitter_call(term, geo):
+def get_api():
     api = twitter.Api(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, 
                       TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_SECRET)
+    return api
+
+def twitter_call(term, geo):
+    api = get_api()
     results = api.GetSearch(term=term, geocode=geo)
     return results
 
@@ -43,7 +47,6 @@ def popular_hashtags(lat, long):
                     hashtags[h] = hashtags[h]+1
                 else:
                     hashtags[h] = 1
-            print s.user.screen_name, '\t', s.text, s.coordinates, s.location
     print hashtags
     return hashtags
     
@@ -57,9 +60,15 @@ def parse_hashtags(text):
     return hashtags
 
 def good_tweets(hashtags):
+    THRESHOLD = 10
     max = sorted(hashtags.iteritems(), key=lambda (k,v): (v,k), reverse=True)[0]
-    results = twitter_call(max[0], None)
-    for s in results:
+    good = []
+    for tag in max:
+        results = twitter_call(tag, None)
+        good.extend(results)
+        if len(good) > THRESHOLD:
+            break
+    for s in good:
         print s.user.screen_name, '\t', s.text, s.coordinates, s.location
         
 
