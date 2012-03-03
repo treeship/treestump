@@ -1,5 +1,15 @@
 #!/usr/bin/python
 
+# NOTE: You need a settings.py file with certain oauth tokens for
+# twitter and foursquare.  I can give you mine but I don't want to
+# check them in publicly (neha).
+#
+# To find interesting hash tags near Cambridge:
+#   python tweets.py   
+#
+# To find interesting hash tags somewhere else:
+#   python tweets.py lat long
+
 import twitter
 import sys
 from venues import Foursquare
@@ -10,7 +20,8 @@ cambridge_long = -71.084
 radius = '10mi'
 
 def twitter_call(term, geo):
-    api = twitter.Api(consumer_key, consumer_secret, access_token, access_secret)
+    api = twitter.Api(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, 
+                      TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_SECRET)
     results = api.GetSearch(term=term, geocode=geo)
     return results
 
