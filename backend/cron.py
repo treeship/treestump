@@ -1,9 +1,12 @@
+import sys
+sys.path.append('..')
+
 from datetime import datetime
 from db import *
 import time
 import argparse
 
-from patch import PatchReader
+from scrapers.patch import PatchReader
 
 # get_json(lat, lon, dist, newerthan_insertion_time) -> [ {} ]
 
