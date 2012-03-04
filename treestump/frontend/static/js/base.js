@@ -1,5 +1,61 @@
 
+function insertFieldAddress(address) {
+ $('#headline').append("<h4>"+address+"</h4>");
+}
+
+function insertPermanentHeadline(headline) {
+ $('#headline').append("<h2>"+headline+"</h2>");
+}
+
+function createNewDiv(imgurl, partext) {
+  removeDiv();
+  window.setTimeout(function (){ addDiv(imgurl, partext) }, 1000);
+}
+
+function addDiv(imgurl, partext) {
+  var imgurlhtml='';
+  var partexthtml='';
+  //<div class="text_view" id="0">
+  //  <img src="../css/00.jpg">
+  //  <h1>This is just a text, you know l</h1>
+  //</div>
+  var newhtml = '<div class="text_view">';
+  if (imgurl.length > 0) {
+    var imgurlhtml = '<img src="'+imgurl+'">';
+  }
+  if (partext.length > 0) {
+    var partexthtml = '<h1>'+partext+'</h1>';
+  }
+  newhtml =  newhtml+imgurlhtml+partexthtml+'</div>';
+  var added = $(newhtml);
+  added.hide();
+  $('#overlayB').append(added);
+  $(added).fadeIn();
+}
+
+function removeDiv() {
+  var maxNum = 5;
+  var allelements = $('.text_view');
+  if (allelements.length > (maxNum-1)) {
+    var removed = $(allelements[0]);
+    removed.fadeOut('slow', function() { removed.remove()});
+  }
+}
+
+function backgroundtext(text) {
+ $('#background-text').append(text);
+ $('#background-text').append(text);
+ $('#background-text').append(text);
+ $('#background-text').append(text);
+ $('#background-text').append(text);
+ $('#background-text').append(text);
+}
+
+
+
 function start_fetching(address) {
+  insertFieldAddress(address);
+
   var websocket;
 
   if ('WebSocket' in window) {
@@ -11,8 +67,13 @@ function start_fetching(address) {
 
   websocket.onmessage = function (msg) {
     var data = JSON.parse(msg.data);
-    // TODO: process the incoming data and display it nicely.
-    $('#output').append(data[0].latlon + '<br>' + data[0].source + '<br>')
+    for (var i = 0; i < data.length; ++i) {
+      var d = data[i];
+      var imgurl = '';
+      if (d.imgurls.length > 0)
+        imgurl = d.imgurls[0];
+      createNewDiv(imgurl, d.title);
+    }
   };
 
   websocket.onerror = function (evt) {
