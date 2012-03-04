@@ -14,7 +14,7 @@ def hello():
     out+="</body></html>"
     return out
 
-@app.route("/location")
+@app.route("/tweets")
 def show_tweets():
     lat = float(request.args['lat'])
     long = float(request.args['long'])
