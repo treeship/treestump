@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from gevent import Greenlet, sleep
 from gevent.queue import Queue
-from gevent.pywsgi import WSGIServer
+from gevent.pywsgi import WSGIServer # must be pywsgi to support websocket
 from geventwebsocket.handler import WebSocketHandler
 from flask import Flask, request, render_template
 
@@ -28,27 +28,32 @@ class Publisher(object):
   def __init__(self, key, sub):
     self.key = key
     self.subs = set([sub])
-    self.greenlet = Greenlet(Publisher.scrape, self)
+    self.greenlet = Greenlet(Publisher.serve, self)
     self.greenlet.start()
 
-  def scrape(self):
+  def serve(self):
     while self.subs:
-      ## TODO: take the key and fetch the data for that key
-      ## for example from foursquare, twitter, etc.
-      ## does not matter if it's blocking or not
-      print "Publisher: %s scraping now" % self.key
-      sleep(1)
-      ## TODO: extract the data that should be pushed to the subscribers.
-      data = "{{" + self.key + "--" + self.key + "}}"
-
-      # optionally save data to db
+      data = self.scrape()
       for s in self.subs:
         s.queue.put(data)
     # remove self
     del Publisher.pubs[self.key]
 
+  def scrape(self):
+    ## TODO: take self.key and fetch the data for that key
+    ## for example from foursquare, twitter, etc.
+    ## does not matter if it's blocking or not
+    print "Publisher: %s scraping now" % self.key
+    sleep(1)
+    ## TODO: extract the data that should be pushed to the subscribers.
+    data = "{{ fake data for %s }}" % self.key
+    # optionally save data to db
+    return data
+
+
 class Subscriber(object):
   def __init__(self, websocket):
+    app.logger.debug("New Subscriber: %s", websocket)
     self.websocket = websocket
     self.pubs = set()
     self.queue = Queue(None) # infinite capacity
@@ -69,6 +74,25 @@ class Subscriber(object):
     for p in self.pubs:
       p.subs.remove(self)
 
+  def serve(self):
+    try:
+      while True:
+        key = self.websocket.receive()
+        if key is None:
+          break
+        self.handle_request(key)
+    except Exception, e:
+      app.logger.error('An error occoured', exc_info=e)
+    self.close()
+
+  def handle_request(self, request):
+    ## TODO: take the key and map it to (possibly a set of) key(s).
+    ## This will spawn publishers (scrapers) as required.
+    key = str(request)
+    Publisher.register(key, self)
+
+
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -80,19 +104,7 @@ def query():
   if request.environ.get('wsgi.websocket'):
     websocket = request.environ['wsgi.websocket']
     sub = Subscriber(websocket)
-    app.logger.debug("New Subscriber: %s", websocket)
-    try:
-      while True:
-        key = websocket.receive()
-        if key is None:
-          break
-        ## TODO: take the key and map it to (possibly a set of) key(s).
-        ## This will spawn publishers (scrapers) as required.
-        key = str(key)
-        Publisher.register(key, sub)
-    except Exception, e:
-      app.logger.error('An error occoured', exc_info=e)
-    sub.close()
+    sub.serve()
   return "bai"
 
 if __name__ == '__main__':
