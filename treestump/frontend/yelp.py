@@ -8,6 +8,8 @@ import urllib2
 import time
 from django.utils.encoding import smart_str
 import datetime
+import os, sys
+sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
 import settings
 import argparse
 
@@ -59,6 +61,8 @@ class YelpReader():
         self.lat = lat
         self.lon = lon
 
+    name = property(lambda self: 'Yelp')
+
     def next(self):
         ids = self.get_nearby_restaurants()
 
@@ -95,7 +99,7 @@ class YelpReader():
 
         ids = []
         for b in businesses:
-            print b['id']
+            #print b['id']
             ids.append(b['id'])
 
         return ids
@@ -122,7 +126,7 @@ class YelpReader():
             return None
         reviews = response['reviews']
 
-        print '\n', 'Reviews for', response['name']
+        #print '\n', 'Reviews for', response['name']
 
         parsed_reviews = []
         # datetime, title, short text, long/full text, list of image urls
@@ -139,7 +143,11 @@ class YelpReader():
             full_text = r['excerpt']
 #            print r['user']['name'], 'said on', t.tm_mon, t.tm_mday, t.tm_year, '...'
 #            print r['excerpt']
-            images = [response['image_url'], r['user']['image_url']]
+            images = []
+            if 'image_url' in response:
+                images.append(response['image_url'])
+            if 'user' in r and 'image_url' in r['user']:
+                images.append( r['user']['image_url'] )
             parsed_reviews.append([date,
                                    title,
                                    short_text,
