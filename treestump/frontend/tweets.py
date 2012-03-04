@@ -12,7 +12,7 @@
 
 import twitter
 import sys
-from venues import Foursquare
+from foursquare import Foursquare
 import os
 from settings import *
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
