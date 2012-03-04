@@ -3,6 +3,9 @@ import tweets
 import foursquare
 #import patch  # this doesn't work because I can't install readability?
 
+# python server.py
+# Super hacky lightweight server which outputs data
+
 app = Flask(__name__)
 
 @app.route("/")
