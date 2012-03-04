@@ -1,9 +1,13 @@
 import psycopg2
 import sys
+import os
+sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+from settings import *
+
 
 def connect(dbname):
     try:
-        connection = "dbname='%s' user='sirrice' port='5432'" % (dbname)
+        connection = "dbname='%s' user='%s' port='%d'" % (dbname, DBUSER, DBPORT)
         db = psycopg2.connect(connection)
     except:
         sys.stderr.write( "couldn't connect\n")
