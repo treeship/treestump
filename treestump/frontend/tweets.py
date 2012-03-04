@@ -14,13 +14,42 @@ import twitter
 import sys
 from venues import Foursquare
 import os
+from settings import *
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
-
-
 
 cambridge_lat = 42.363
 cambridge_long = -71.084
 radius = '10mi'
+
+class TwitterReader:
+    def __init__(self, lat, lon):
+        self.lat = lat
+        self.lon = lon
+
+    name = property(lambda self:"Twitter")
+
+    def next(self):
+        tweets = good_tweets(popular_hashtags(self.lat, self.lon))
+        for tweet in tweets:
+            try:
+                title = tweet.text
+                time = tweet.GetCreatedAt()
+                images = images_from_tweet(tweet)
+                yield self.lat, self.lon, time, None, tweet.text, None, extract_images(tweet)
+            except Exception as e:
+                print e
+                pass
+        raise StopIteration
+
+    def __iter__(self):
+        return self.next()
+    
+def extract_images(tweet):
+    # TODO: Stupid python-twitter doesn't give me back entitities,
+    # which might have more interesting urls in the tweet, parsed for
+    # me.  Either parse the tweet for images or send the API call
+    # directly so I can retrieve entitities.
+    return [tweet.user.profile_image_url]
 
 def get_api():
     api = twitter.Api(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, 
