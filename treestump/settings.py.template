@@ -1,6 +1,10 @@
 # instructions: copy this as settings.py and add in your KEY information
 # IMPORTANT! don't commit your settings.py file!!!
 
+# Database Information
+DBNAME = 'angelhack'
+DBUSER = 'sirrice'
+DBPORT = 5432
 
 # Twitter
 TWITTER_CONSUMER_KEY = ''
