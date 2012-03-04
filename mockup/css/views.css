@@ -5,6 +5,7 @@ body {
 }
 
 #background-text {
+  text-align: justify;
   position: absolute;
   top: 0;
   left: 0;
@@ -22,6 +23,7 @@ img {
 }
 
 #icon img {
+  background-color: #000000;
   position: absolute;
   bottom: 0;
   right: 0;
@@ -45,7 +47,7 @@ img {
 
 .text_view {
   background-color: #802080;
-  opacity: 0.6;
+  opacity: 0.9;
   padding: 0 0 0 0;
   margin: 10 10 10 10;
   box-shadow: 10px 10px 5px #FFFFFF;
