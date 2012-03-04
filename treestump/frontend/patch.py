@@ -71,7 +71,7 @@ class PatchReader(object):
         for story in stories:
             try:
                 title, summary = self.extract_data( story['story_url'] )
-                yield self.lat, self.lon, datetime.now(), title, None, summary, []
+                yield self.lat, self.lon, datetime.now(), title, None, summary, [], {}
             except Exception as e:
                 print e
                 pass
