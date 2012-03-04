@@ -1,10 +1,10 @@
-HI
-
 
 Python libraries used
 
 
 pip install readability
 pip install requests
+pip install twitter foursquare instagram
 
-
+http://code.google.com/p/python-twitter/
+https://github.com/joet3ch/foursquare-python

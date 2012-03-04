@@ -79,13 +79,6 @@ class PatchReader(object):
 
     def __iter__(self):
         return self.next()
-        class I(object):
-            def next(self):
-                return 
-            def __iter__(self):
-                return self
-        return self
-            
 
 if __name__ == '__main__':
     
