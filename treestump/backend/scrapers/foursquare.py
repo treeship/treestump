@@ -6,7 +6,7 @@ import urllib2
 import sys
 import os
 from datetime import datetime
-sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+sys.path.append( os.path.join(os.path.dirname(__file__), '../../') )
 from settings import *
 
 class FoursquareVenueReader:

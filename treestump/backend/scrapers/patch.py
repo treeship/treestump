@@ -11,7 +11,7 @@ import requests
 import os
 from readability.readability import Document
 from django.utils.encoding import smart_str, smart_unicode
-sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+sys.path.append( os.path.join(os.path.dirname(__file__), '../../') )
 from settings import *
 
 

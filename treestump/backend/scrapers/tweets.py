@@ -14,12 +14,13 @@ import twitter
 import sys
 from foursquare import Foursquare
 import os
-sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+sys.path.append( os.path.join(os.path.dirname(__file__), '../../') )
 from settings import *
 
 cambridge_lat = 42.363
 cambridge_long = -71.084
 radius = '10mi'
+
 
 class TwitterReader:
     def __init__(self, lat, lon):
@@ -30,12 +31,12 @@ class TwitterReader:
 
     def next(self):
         tweets = good_tweets(popular_hashtags(self.lat, self.lon))
-        for tweet in tweets:
+        for tweet in tweets[0]:
             try:
                 title = tweet.text
                 time = tweet.GetCreatedAt()
-                images = images_from_tweet(tweet)
-                yield self.lat, self.lon, time, None, tweet.text, None, extract_images(tweet)
+                images = [] #images_from_tweet(tweet)
+                yield self.lat, self.lon, time, title, tweet.text, None, extract_images(tweet)
             except Exception as e:
                 print e
                 pass
@@ -107,6 +108,6 @@ def run():
 
 if __name__ == '__main__':
     if len(sys.argv) > 2:
-        good_tweets(popular_hashtags(float(sys.argv[1]), float(sys.argv[2])))
+        print good_tweets(popular_hashtags(float(sys.argv[1]), float(sys.argv[2])))
     else:
-        run()
+        print run()

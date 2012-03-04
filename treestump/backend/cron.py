@@ -51,11 +51,11 @@ def add_data(db, tag, lat, lon, time, title, shorttxt, fulltxt, imgurls, metadat
         return None, None
 
 if __name__ == '__main__':
-    from frontend.patch import PatchReader
-    from frontend.instagramreader import InstagramReader
-    from frontend.tweets import TwitterReader
-    from frontend.foursquare import FoursquareVenueReader
-    from frontend.yelp import YelpReader
+    from scrapers.patch import PatchReader
+    from scrapers.instagramreader import InstagramReader
+    from scrapers.tweets import TwitterReader
+    from scrapers.foursquare import FoursquareVenueReader
+    from scrapers.yelp import YelpReader
 
     parser = argparse.ArgumentParser()
     parser.add_argument('lat')
@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
     lat, lon = float(args.lat), float(args.lon)
 
-    sources = [ PatchReader, InstagramReader, #TwitterReader,
+    sources = [ PatchReader, InstagramReader, TwitterReader,
                 FoursquareVenueReader, YelpReader]
     readers = map(lambda s: s(lat, lon), sources)
 

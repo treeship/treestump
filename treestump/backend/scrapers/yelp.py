@@ -9,7 +9,7 @@ import time
 from django.utils.encoding import smart_str
 import datetime
 import os, sys
-sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+sys.path.append( os.path.join(os.path.dirname(__file__), '../../') )
 import settings
 import argparse
 

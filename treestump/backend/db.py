@@ -28,7 +28,7 @@ def prepare(db, queryline, params = None, bexit=True, commit=True):
         return ret
     except:
         db.rollback()
-        print >>sys.stderr, "DBError: %s\t%s" % ( queryline, sys.exc_info() )
+        #print >>sys.stderr, "DBError: %s\t%s" % ( queryline, sys.exc_info() )
         if bexit:
             sys.exit()
     return None
