@@ -26,5 +26,5 @@ https://github.com/joet3ch/foursquare-python
 
 # for pubsub.py
 sudo apt-get install libevent-dev
-pip install gevent gevent-websocket
+pip install gevent gevent-websocket simplejson
 
