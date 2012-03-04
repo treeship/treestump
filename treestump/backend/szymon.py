@@ -74,7 +74,7 @@ class DataGatherer(object):
             where.append( "(((lat - %s)^2) + ((lon - %s)^2))^0.5 < %s" )
             params.extend( (lat, lon, radius) )
         if min_insert_time:
-            where.append( "addtime >= %s" )
+            where.append( "addtime > %s" )
             params.append(min_insert_time)
         if source:
             where.append( "source = %s" )
