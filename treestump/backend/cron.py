@@ -7,6 +7,8 @@ import os
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
 from settings import *
 
+import traceback
+
 # get_json(lat, lon, dist, newerthan_insertion_time) -> [ {} ]
 
 
@@ -133,8 +135,9 @@ class APICron(object):
 
                 reader.update_timer(nerrs, n)
                 
-            except Exception as e:
-                print >>sys.stderr, "ERROR\t", reader.reader.name, '\t', e
+            except:
+                print >>sys.stderr, "ERROR\t", reader.reader.name
+                traceback.print_exc()
 
 
 

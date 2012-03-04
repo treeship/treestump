@@ -6,10 +6,17 @@ from gevent.pywsgi import WSGIServer # must be pywsgi to support websocket
 from geventwebsocket.handler import WebSocketHandler
 from flask import Flask, request, render_template
 
+import sys, os
+sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+from backend import szymon
+
 import uuid
 import simplejson
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
+
+DG = szymon.DataGatherer(None)
 
 class Publisher(object):
   # maps key -> Publisher
@@ -30,6 +37,8 @@ class Publisher(object):
     self.subs = set([sub])
     self.greenlet = Greenlet(Publisher.serve, self)
     self.greenlet.start()
+    # ask for data from the last minute
+    self.query_time = None # datetime.now() - timedelta(minutes = 1)
 
   def serve(self):
     while self.subs:
@@ -40,14 +49,20 @@ class Publisher(object):
     del Publisher.pubs[self.key]
 
   def scrape(self):
-    ## TODO: take self.key and fetch the data for that key
-    ## for example from foursquare, twitter, etc.
-    ## does not matter if it's blocking or not
-    print "Publisher: %s scraping now" % self.key
-    sleep(1)
-    ## TODO: extract the data that should be pushed to the subscribers.
-    data = "{{ fake data for %s }}" % self.key
-    # optionally save data to db
+    ## Fetch the data for that self.key.
+    while True:
+      data, next_time = DG.query(self.key[0],
+                                 self.key[1],
+                                 1.0,
+                                 self.query_time)
+      if data:
+        break
+      sleep(0.1) # wait for data for 100ms
+    self.query_time = next_time
+    # convert to primitive types for simplejson
+    for d in data:
+      d['time'] = str(d['time'])
+    data = simplejson.dumps(data)
     return data
 
 
@@ -77,21 +92,28 @@ class Subscriber(object):
   def serve(self):
     try:
       while True:
-        key = self.websocket.receive()
-        if key is None:
+        request = self.websocket.receive()
+        if request is None:
           break
-        self.handle_request(key)
+        self.handle_request(request)
     except Exception, e:
       app.logger.error('An error occoured', exc_info=e)
     self.close()
 
   def handle_request(self, request):
-    ## TODO: take the key and map it to (possibly a set of) key(s).
+    ## Take the key and map it to (possibly a set of) key(s).
     ## This will spawn publishers (scrapers) as required.
-    key = str(request)
+    try:
+      location = simplejson.loads(request)
+      # Key is (latitude, longitude) tuple
+      # TODO: round-off location so that it's less precise
+      key = (location['lat'], location['lng'])
+    except:
+      app.logger.error('Unrecognized request: %s' % request)
+      print dir(request)
+      return
+
     Publisher.register(key, self)
-
-
 
 app = Flask(__name__)
 
