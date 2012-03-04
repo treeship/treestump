@@ -141,6 +141,11 @@ def index():
 def eugene():
   return render_template('eugene.html')
 
+@app.route('/views')
+def views():
+  searchkey = request.values['search']
+  return render_template('views.html', searchkey=searchkey)
+
 @app.route('/query')
 def query():
   if request.environ.get('wsgi.websocket'):
