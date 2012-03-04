@@ -42,13 +42,14 @@ class Venue:
 class Foursquare:
     API_URL="https://api.foursquare.com/v2/"
     VENUES_HANDLER="venues/search?"
-    BASE_URL = API_URL+VENUES_HANDLER+"client_id="+FS_CLIENT_ID+"&client_secret="+FS_CLIENT_SECRET
+    VENUES_URL = API_URL+VENUES_HANDLER+"client_id="+FS_CLIENT_ID+"&client_secret="+FS_CLIENT_SECRET
+    CHECKINS_URL = API_URL+""+"client_id="+FS_CLIENT_ID+"&client_secret="+FS_CLIENT_SECRET
 
     def venues(self, lat, long, num_results=10):
         if num_results > 50:
             print "50 is the limit"
             return
-        url = self.BASE_URL + "&ll=%02f,%02f&intent=checkin&radius=500&limit=%d" % (lat, long, num_results)
+        url = self.VENUES_URL + "&ll=%02f,%02f&intent=checkin&radius=500&limit=%d" % (lat, long, num_results)
         x = urllib2.urlopen(url).read()
         results = simplejson.loads(x)['response']['groups'][0]['items']
         k = []
@@ -56,6 +57,9 @@ class Foursquare:
             v = Venue(i)
             k.append(v)
         return k
+
+    def checkins(self, lat, long):
+        pass
 
 if __name__ == "__main__":
     fs = Foursquare()
