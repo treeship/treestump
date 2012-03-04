@@ -58,8 +58,13 @@ def get_api():
     return api
 
 def twitter_call(term, geo):
+    results = []
     api = get_api()
-    results = api.GetSearch(term=term, geocode=geo)
+    try:
+        results = api.GetSearch(term=term, geocode=geo)
+    except Exception as e:
+        print "GetSearch failed: ", term, geo, e
+        pass
     return results
 
 def popular_hashtags(lat, long):
