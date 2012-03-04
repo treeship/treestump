@@ -1,6 +1,6 @@
 
 function insertFieldAddress(address) {
- $('#headline').append("<h4>"+address+"</h4>");
+ $('#headline > h4').html(address);
 }
 
 function insertPermanentHeadline(headline) {

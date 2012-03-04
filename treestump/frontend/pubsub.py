@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import gevent.monkey
+gevent.monkey.patch_all()
+
 from gevent import Greenlet, sleep
 from gevent.queue import Queue
 from gevent.pywsgi import WSGIServer # must be pywsgi to support websocket
@@ -54,18 +57,19 @@ class Publisher(object):
       data = self.scrape()  # blocking call
       for s in self.subs:
         s.queue.put(data)
+      sleep() # yield to clients
     # remove self
     del Publisher.pubs[self.key]
 
   def scrape(self):
     ## Fetch the data for that self.key.
     while self.subs:
-      print 'asking for ', self.query_time
+      print 'Pub(%s) @%s' % (self.key, self.query_time)
       data, next_time = DG.query(self.key[0],
                                  self.key[1],
                                  1.0,
                                  self.query_time)
-      print 'got', data, next_time
+      print 'Pub(%s) got %s @%s' % (self.key, len(data), next_time)
       if data:
         break
       sleep(1.0) # wait for data for 100ms
