@@ -36,7 +36,7 @@ function addDiv(imgurl, partext) {
 function removeDiv() {
   var maxNum = 5;
   var allelements = $('.text_view');
-  if (allelements.length > (maxNum-1)) {
+  if (allelements.size() > (maxNum-1)) {
     var removed = $(allelements[0]);
     removed.fadeOut('slow', function() { removed.remove()});
   }

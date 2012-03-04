@@ -13,13 +13,13 @@ body {
 }
 
 img {
-  z-index = -1;
+  z-index : -1;
 }
 
 #overlayB {
   position: absolute;
   top: 180px;
-  z-index = 1;
+  z-index : 1;
 }
 
 #icon img {
@@ -71,7 +71,10 @@ img {
   z-index: -1;
 }
 
-h1, h2, h3, h4, h5 { color: #F0F0F0; padding: 10 10 10 30;}
+h1, h2, h3, h4, h5 {
+  color: #F0F0F0;
+  padding: 10 10 10 30;
+}
 h1 { font-size: 72px; }
 h2 { font-size: 48px; }
 h3 { font-size: 32px; }
