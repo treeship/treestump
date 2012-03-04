@@ -129,12 +129,17 @@ class APICron(object):
                             print >>sys.stderr, ( "Error with %s" % '\t'.join(map(str, data[:4])) )
                         else:
                             print "imported ", data[:4]
+                    except KeyboardInterrupt:
+                        print "bai"
+                        return
                     except Exception as e:
                         print >>sys.stderr, "ERROR\t", reader.reader.name, '\t', e
                         pass
 
                 reader.update_timer(nerrs, n)
-                
+            except KeyboardInterrupt:
+                print "baibai"
+                return
             except:
                 print >>sys.stderr, "ERROR\t", reader.reader.name
                 traceback.print_exc()
