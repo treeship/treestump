@@ -4,13 +4,18 @@ import os
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
 from settings import *
 
+import traceback
+
 
 def connect(dbname):
     try:
+        if not dbname:
+          dbname = DBNAME
         connection = "dbname='%s' user='%s' port='%d'" % (dbname, DBUSER, DBPORT)
         db = psycopg2.connect(connection)
     except:
         sys.stderr.write( "couldn't connect\n")
+        traceback.print_exc()
         sys.exit()
     return db
 
