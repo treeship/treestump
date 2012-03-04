@@ -1,0 +1,22 @@
+body {
+
+  font: 100% Helvetica, Arial;
+  background-color:#e83;
+background-image:url('00.png'); 
+}
+
+#icon img{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  padding: 10 10 10 10;
+}
+
+#text_view {
+  visibility: none;
+}
+
+#photo_view{
+  visibility: hidden;
+}
