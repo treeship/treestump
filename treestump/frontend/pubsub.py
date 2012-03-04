@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 import sys, os
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
 from backend import szymon
+from backend.scrapers.tweets import popular_hashtags
 
 app = Flask(__name__)
 
@@ -157,6 +158,11 @@ def query():
     sub = Subscriber(websocket)
     sub.serve()
   return "bai"
+
+@app.route('/tweets')
+def tweets():
+  hashtags = popular_hashtags(float(request.values['lat']), float(request.values['lng']))
+  return simplejson.dumps(hashtags)
 
 if __name__ == '__main__':
   app.debug = True

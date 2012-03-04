@@ -1,10 +1,10 @@
 
 function insertFieldAddress(address) {
- $('#headline > h4').html(address);
+ $('#headline > h3').html(address);
 }
 
 function insertPermanentHeadline(headline) {
- $('#headline').append("<h2>"+headline+"</h2>");
+ $('#headline > h2').html(headline);
 }
 
 function createNewDiv(imgurl, partext) {
@@ -24,7 +24,7 @@ function addDiv(imgurl, partext) {
     var imgurlhtml = '<img src="'+imgurl+'">';
   }
   if (partext.length > 0) {
-    var partexthtml = '<h1>'+partext+'</h1>';
+    var partexthtml = '<h4>'+partext+'</h4>';
   }
   newhtml =  newhtml+imgurlhtml+partexthtml+'</div>';
   var added = $(newhtml);
@@ -51,6 +51,11 @@ function backgroundtext(text) {
  $('#background-text').append(text);
 }
 
+function get_hashtags(location) {
+  $.get('/tweets', location, function(data) {
+    backgroundtext(data);
+  });
+}
 
 
 function start_fetching(address) {
@@ -88,6 +93,8 @@ function start_fetching(address) {
     var query = { 'lat': latlon.lat(), 'lng': latlon.lng() };
     // for some reason JSON sent as binary doesn't get through to gevent
     websocket.send(JSON.stringify(query));
+
+    get_hashtags(query);
   });
 }
 
