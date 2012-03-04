@@ -5,14 +5,13 @@ import argparse
 import sys
 import os
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
-from frontend.patch import PatchReader
 
 # get_json(lat, lon, dist, newerthan_insertion_time) -> [ {} ]
 
 
 DBNAME = 'angelhack'
 EVENTINSERT = "insert into events values(DEFAULT, %s, %s, %s, %s, %s, DEFAULT, %s, %s, %s) returning id"
-IMGINSERT = "insert into events values(DEFAULT, %s, %s, %s) returning id"
+IMGINSERT = "insert into imgs values(DEFAULT, %s, %s, %s) returning id"
 MDINSERT = "insert into metadata values (DEFAULT, %s, %s, %s) returning id"
 deduphack = set()
 
@@ -30,7 +29,6 @@ def get_hash(*data, **kwargs):
 def add_data(db, tag, lat, lon, time, title, shorttxt, fulltxt, imgurls, metadata={}):
     try:
         hashval = get_hash(tag, lat, lon, title, shorttxt, fulltxt)
-        print hashval
         params = (hashval, tag, lat, lon, time, title, shorttxt, fulltxt)
         ret = prepare(db, EVENTINSERT, params = params, commit=False)
         if ret is None: return None, None
@@ -38,10 +36,14 @@ def add_data(db, tag, lat, lon, time, title, shorttxt, fulltxt, imgurls, metadat
 
         imgids = []
         for imgurl in imgurls:
-            imgids.append( prepare(db, IMGINSERT, (eid, imgurl, None), commit=False) )
+            imgid = prepare(db, IMGINSERT, (eid, imgurl, None), commit=False)
+            if imgid:
+                imgids.append( imgid )
         mdids = []
         for key, val in metadata.items():
-            mdids.append( prepare(db, MDINSERT, (eid, key, val), commit=False) )
+            mid = prepare(db, MDINSERT, (eid, key, val), commit=False)
+            if mid:
+                mdids.append( mid )
 
         db.commit()
         return eid, imgids
@@ -49,6 +51,11 @@ def add_data(db, tag, lat, lon, time, title, shorttxt, fulltxt, imgurls, metadat
         return None, None
 
 if __name__ == '__main__':
+    from frontend.patch import PatchReader
+    from frontend.instagramreader import InstagramReader
+    from frontend.tweets import TwitterReader
+    from frontend.foursquare import FoursquareVenueReader
+    from frontend.yelp import YelpReader
 
     parser = argparse.ArgumentParser()
     parser.add_argument('lat')
@@ -58,7 +65,8 @@ if __name__ == '__main__':
 
     lat, lon = float(args.lat), float(args.lon)
 
-    sources = [ PatchReader ]
+    sources = [ PatchReader, InstagramReader, #TwitterReader,
+                FoursquareVenueReader, YelpReader]
     readers = map(lambda s: s(lat, lon), sources)
 
     db = connect(args.db)
@@ -66,9 +74,18 @@ if __name__ == '__main__':
     try:
         while True:
             for reader in readers:
-                for data in reader:
-                    eid, imgids = add_data(db, reader.name, *data)
-                    print "got eid", eid
+                try:
+                    for data in reader:
+                        try:
+                            eid, imgids = add_data(db, reader.name, *data)
+                            if eid is None:
+                                raise Exception( "Error with %s" % '\t'.join(map(str, data[:4])) )
+                            else:
+                                print "imported ", data[:4]
+                        except Exception as e:
+                            print >>sys.stderr, "ERROR\t", reader.name, '\t', e
+                except Exception as e:
+                    print >>sys.stderr, "ERROR\t", reader.name, '\t', e
             time.sleep(2)
 
     except KeyboardInterrupt:
