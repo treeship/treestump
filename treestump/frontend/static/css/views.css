@@ -6,7 +6,12 @@ body {
 }
 
 #background-text {
+  position: fixed;
+  top: 0px;
+  left: 0px;
   text-align: justify;
+  color: gray;
+  z-index: -1;
 }
 
 img {
@@ -15,7 +20,7 @@ img {
 
 #overlayB {
   position: absolute;
-  top: 180px;
+  top: 140px;
   z-index : 1;
 }
 
@@ -31,7 +36,7 @@ img {
 #headline {
   color: #ffffff;
   background-color: #000000;
-  height: 190px;
+  /*height: 140px;*/
   width: 100%;
 }
 
@@ -70,6 +75,6 @@ h1, h2, h3, h4, h5 {
   padding: 10 10 10 10;
 }
 h1 { font-size: 72px; }
-h2 { font-size: 32px; padding-left: 20 }
+h2 { font-size: 32px; padding: 40 }
 h3 { font-size: 20px; padding-left: 20 }
 h4 { font-size: 20px; padding: 5 }

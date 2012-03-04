@@ -43,13 +43,10 @@ function removeDiv() {
 }
 
 function backgroundtext(text) {
- $('#background-text').html('');
- $('#background-text').append(text);
- $('#background-text').append(text);
- $('#background-text').append(text);
- $('#background-text').append(text);
- $('#background-text').append(text);
- $('#background-text').append(text);
+  $('#background-text').html('');
+  for (var i = 0; i < 50; ++i) {
+    $('#background-text').append(text);
+  }
 }
 
 function get_hashtags(location) {
