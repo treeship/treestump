@@ -16,6 +16,7 @@ from venues import Foursquare
 import os
 from settings import *
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
+from settings import *
 
 cambridge_lat = 42.363
 cambridge_long = -71.084
@@ -103,6 +104,7 @@ def good_tweets(hashtags):
             break
     for s in good:
         print s.user.screen_name, '\t', s.text, s.coordinates, s.location
+        
 
 if __name__ == '__main__':
     if len(sys.argv) > 2:
