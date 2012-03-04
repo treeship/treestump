@@ -10,8 +10,9 @@ function start_fetching(address) {
   }
 
   websocket.onmessage = function (msg) {
+    var data = JSON.parse(msg.data);
     // TODO: process the incoming data and display it nicely.
-    $('#output').append(msg.data + '<br>')
+    $('#output').append(data[0].latlon + '<br>' + data[0].source + '<br>')
   };
 
   websocket.onerror = function (evt) {
