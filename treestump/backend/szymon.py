@@ -74,7 +74,7 @@ class DataGatherer(object):
             where.append( "(((lat - %s)^2) + ((lon - %s)^2))^0.5 < %s" )
             params.extend( (lat, lon, radius) )
         if min_insert_time:
-            where.append( "addtime >= %s" )
+            where.append( "addtime > %s" )
             params.append(min_insert_time)
         if source:
             where.append( "source = %s" )
@@ -110,6 +110,8 @@ if __name__ == '__main__':
     rows, maxtime = dg.query(40.740512, -73.991479, 1, None)
     for d in rows:
         print '\t', d.keys()
-    rows, maxtime = dg.query(40.740512, -75.991479, 0.01, None)
+    rows, maxtime = dg.query(42.3647559, -71.1032591, 1.0, None)
     for d in rows:
         print '\t', d.keys()
+    rows, maxtime = dg.query(42.3647559, -71.1032591, 1.0, maxtime)
+    print len(rows)

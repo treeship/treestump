@@ -22,6 +22,7 @@ python cron.py
 
 # Python libraries used
 
+pip install django  # unless you already have it
 pip install argparse
 pip install requests
 pip install python-twitter foursquare python-instagram
@@ -38,3 +39,15 @@ https://github.com/joet3ch/foursquare-python
 sudo apt-get install libevent-dev
 pip install gevent gevent-websocket simplejson
 
+
+##############
+client protocol:
+
+  query: {'lat': latitude, 'lng', longitutde }
+  response: [ {'latlon': [lat, lon],
+               'source' : source,
+               'time' : time,
+               'title' : title,
+               'shorttxt' : shorttxt,
+               'fulltxt' : fulltxt,
+               'imgurls' : [url1, url2, ...] }, ... ]

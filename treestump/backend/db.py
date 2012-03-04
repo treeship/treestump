@@ -1,28 +1,17 @@
 import psycopg2
-import psycopg2.pool
 import sys
 import os
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
 from settings import *
-import traceback
 
-def createpool(dbname, minconn=5, maxconn=20):
-    try:
-        connection = "dbname='%s' user='%s' port='%d'" % (dbname, DBUSER, DBPORT)
-        pool = psycopg2.pool.ThreadedConnectionPool(minconn, maxconn, connection)
-        return pool
-    except:
-        sys.stderr.write( "couldn't connect\n")
-        sys.exit()
-    return db
-    
+import traceback
 
 
 def connect(dbname):
     try:
         if not dbname:
           dbname = DBNAME
-        connection = "dbname='%s' user='%s' port='%d'" % (dbname, DBUSER, DBPORT)
+        connection = "dbname='%s' host='%s' user='%s' port='%d'" % (dbname, DBHOST, DBUSER, DBPORT)
         db = psycopg2.connect(connection)
     except:
         sys.stderr.write( "couldn't connect\n")

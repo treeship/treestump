@@ -6,13 +6,14 @@ from gevent.pywsgi import WSGIServer # must be pywsgi to support websocket
 from geventwebsocket.handler import WebSocketHandler
 from flask import Flask, request, render_template
 
+import simplejson
+import uuid
+from collections import deque
+from datetime import datetime, timedelta
+
 import sys, os
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
 from backend import szymon
-
-import uuid
-import simplejson
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -29,7 +30,7 @@ class Publisher(object):
       pub = Publisher(key, sub)
       Publisher.pubs[key] = pub
     else:
-      pub.subs.add(sub)
+      pub.addsub(sub)
     sub.pubs.add(pub)
 
   def __init__(self, key, sub):
@@ -38,11 +39,19 @@ class Publisher(object):
     self.greenlet = Greenlet(Publisher.serve, self)
     self.greenlet.start()
     # ask for data from the last minute
-    self.query_time = datetime.now() - timedelta(minutes = 1)
+    self.query_time = None # datetime.now() - timedelta(minutes = 1)
+    # last 20 results so that we have something to show to new subs
+    self.cache = deque(maxlen=20)
+
+  def addsub(self, sub):
+    # serve the subscriber the cached data
+    data = simplejson.dumps(list(self.cache))
+    sub.queue.put(data)
+    self.subs.add(sub)
 
   def serve(self):
     while self.subs:
-      data = self.scrape()
+      data = self.scrape()  # blocking call
       for s in self.subs:
         s.queue.put(data)
     # remove self
@@ -50,15 +59,21 @@ class Publisher(object):
 
   def scrape(self):
     ## Fetch the data for that self.key.
-    while True:
+    while self.subs:
+      print 'asking for ', self.query_time
       data, next_time = DG.query(self.key[0],
                                  self.key[1],
                                  1.0,
                                  self.query_time)
+      print 'got', data, next_time
       if data:
         break
-      sleep(0.1) # wait for data for 100ms
+      sleep(1.0) # wait for data for 100ms
     self.query_time = next_time
+    # convert to primitive types for simplejson
+    for d in data:
+      d['time'] = str(d['time'])
+    self.cache.extend(data)
     data = simplejson.dumps(data)
     return data
 
@@ -85,6 +100,7 @@ class Subscriber(object):
   def close(self):
     for p in self.pubs:
       p.subs.remove(self)
+    self.pubs.clear()
 
   def serve(self):
     try:
@@ -110,13 +126,25 @@ class Subscriber(object):
       print dir(request)
       return
 
+    # For now, let's drop the current subscriptions.
+    self.close()
     Publisher.register(key, self)
+
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
   return render_template('index.html')
+
+@app.route('/eugene')
+def eugene():
+  return render_template('eugene.html')
+
+@app.route('/views')
+def views():
+  searchkey = request.values['search']
+  return render_template('views.html', searchkey=searchkey)
 
 @app.route('/query')
 def query():
