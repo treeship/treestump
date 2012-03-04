@@ -13,13 +13,17 @@ function insertPermanentHeadline() {
 
 function createNewDiv(imgurl, partext) {
   var id = removeDiv();
+  window.setTimeout(function (){ addDiv(imgurl, partext) }, 1000);
+}
+
+function addDiv(imgurl, partext) {
   var imgurlhtml='';
   var partexthtml='';
   //<div class="text_view" id="0">
   //  <img src="../css/00.jpg">
   //  <h1>This is just a text, you know l</h1>
   //</div>
-  var newhtml = '<div class="text_view" id="'+id+'">';
+  var newhtml = '<div class="text_view">';
   if (imgurl.length > 0) {
     var imgurlhtml = '<img src="'+imgurl+'">';
   }
@@ -27,18 +31,22 @@ function createNewDiv(imgurl, partext) {
     var partexthtml = '<h1>'+partext+'</h1>';
   }
   newhtml =  newhtml+imgurlhtml+partexthtml+'</div>';
-  $('#overlayB').append($(newhtml));
+  var added = $(newhtml);
+  added.hide();
+  $('#overlayB').append(added);
+  $(added).fadeIn();
 }
 
 function removeDiv() {
   var maxNum = 2;
   var allelements = $('.text_view');
-  var allids = $.map(allelements, function(lel, index) {return lel.id});
-  if (allids.length > (maxNum-1)) {
-    var id = allids.pop()
+  //var allids = $.map(allelements, function(lel, index) {return lel.id});
+  if (allelements.length > (maxNum-1)) {
+//    var id = allids[0];
+    var removed = $(allelements[0]);
+    removed.fadeOut('slow', function() { removed.remove()});
+    //return id;
   }
-  $('#'+id).fadeOut('slow');
-  return id;
 }
 
 function backgroundtext() {
