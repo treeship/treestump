@@ -1,6 +1,7 @@
 from flask import Flask, url_for, request
 import tweets
 import foursquare
+#import patch  # this doesn't work because I can't install readability?
 
 app = Flask(__name__)
 
@@ -30,6 +31,19 @@ def show_venues():
     venues = fs.venues(lat, long, 10)
     for v in venues:
         out += "Name: %s Location: %s <br>" % (v.name, v.location)
+    out+="</body></html>"
+    return out
+
+@app.route("/stories")
+def show_stories():
+    lat = float(request.args['lat'])
+    long = float(request.args['long'])
+    out = "<html><body>"
+    reader = PatchReader(lat, long)
+    venues = fs.venues(lat, long, 10)
+    while count < 100:
+        for data in reader:
+            out += "%s %s<br>" % (data[3], data[4])
     out+="</body></html>"
     return out
     
