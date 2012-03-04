@@ -8,8 +8,9 @@ function do_submit(ev) {
   geocoder.geocode({ 'address': address }, function(results, status) {
     var latlon = results[0].geometry.location;
     $('#output').html('query: ' + latlon + '<br>');
-    // TODO: we might want to make a regular query before asking for real-time updates.
-    websocket.send(latlon);
+    var query = { 'lat': latlon.lat(), 'lng': latlon.lng() };
+    // for some reason JSON sent as binary doesn't get through to gevent
+    websocket.send(JSON.stringify(query));
   });
   return false;
 }
