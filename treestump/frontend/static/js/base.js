@@ -57,7 +57,13 @@ function get_hashtags(location) {
 
 
 function start_fetching(address) {
-  insertFieldAddress(address);
+//  insertFieldAddress(address);
+
+//  if (address.substring(0, 6) != '42.364')
+  insertPermanentHeadline(address);
+
+  if (address == '1 Broadway, Cambridge, MA')
+    address = '42.364, -71.084'
 
   var websocket;
 
