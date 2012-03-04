@@ -5,8 +5,32 @@ import simplejson
 import urllib2
 import sys
 import os
+from datetime import datetime
 sys.path.append( os.path.join(os.path.dirname(__file__), '..') )
 from settings import *
+
+class FoursquareVenueReader:
+    def __init__(self, lat, lon):
+        self.lat = lat
+        self.lon = lon
+        self.fs = Foursquare()
+
+    name = property(lambda self:"Foursquare Venues")
+
+    def next(self):
+        venues = self.fs.venues(self.lat, self.lon, 20)
+        for v in venues:
+            try:
+                title = v.name
+                yield self.lat, self.lon, datetime.now(), v.name, None, None, None
+            except Exception as e:
+                print e
+                pass
+        raise StopIteration
+
+    def __iter__(self):
+        return self.next()
+
 
 class Venue:
     def __init__(self, item):
