@@ -1,5 +1,9 @@
+#
+#
+
 from db import *
 
+RESTRICTED_KEYS = ['latlon', 'time', 'title', 'shorttxt', 'fulltxt', 'urls']
 
 class DataGatherer(object):
     __mes__ = {}
@@ -13,22 +17,31 @@ class DataGatherer(object):
         self.db = connect(dbname)
     
 
-    def query(self, lat, lon, radius, min_insert_time):
-        ret = []
-        for data in self.get_events(lat, lon, radius, min_insert_time):
-            eid, lat, lon, time, title, shorttxt, fulltxt = data
-            urls = self.get_imgs(eid)
+    def query(self, lat, lon, radius, min_insert_time, source=None):
+        try:
+            ret = []
+            for data in self.get_events(lat, lon, radius, min_insert_time, source):
+                eid, source, lat, lon, time, title, shorttxt, fulltxt = data
+                urls = self.get_imgs(eid)
 
-            d = {'latlon': (lat, lon),
-                 'time' : time,
-                 'title' : title,
-                 'shorttxt' : shorttxt,
-                 'fulltxt' : fulltxt,
-                 'urls' : tuple(urls)}
-            ret.append( d )
-        return ret
+                d = {'latlon': (lat, lon),
+                     'source' : source,
+                     'time' : time,
+                     'title' : title,
+                     'shorttxt' : shorttxt,
+                     'fulltxt' : fulltxt,
+                     'imgurls' : tuple(urls)}
 
-    def get_events(self, lat, lon, radius, min_insert_time):
+                md = self.get_metadata(eid)
+                d.update(md)
+
+                ret.append( d )
+            return ret
+        except Exception as e:
+            print e
+            return []
+
+    def get_events(self, lat, lon, radius, min_insert_time, source):
         where = []
         params = []
         if lat and lon and radius:
@@ -37,8 +50,11 @@ class DataGatherer(object):
         if min_insert_time:
             where.append( "addtime >= %s" )
             params.append(min_insert_time)
+        if source:
+            where.append( "source = %s" )
+            params.append( source )
 
-        sql = '''select id, lat, lon, time, title, shorttxt, fulltxt
+        sql = '''select id, source, lat, lon, time, title, shorttxt, fulltxt
         from events where %s
         order by addtime asc limit 30''' % ' and '.join(where)
 
@@ -48,6 +64,15 @@ class DataGatherer(object):
         ret = []
         for url, blob in query(self.db, "select url, blob from imgs where eid = %s", (eid,)):
             ret.append( url )
+        return ret
+
+    def get_metadata(self, eid):
+        ret = {}
+        for key, val in query(self.db, "select key, val from metadata", (eid,)):
+            ret[key] = val
+        for banned in RESTRICTED_KEYS:
+            if banned in ret:
+                del ret[banned]
         return ret
         
         

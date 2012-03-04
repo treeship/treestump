@@ -10,7 +10,7 @@ def connect(dbname):
         sys.exit()
     return db
 
-def prepare(db, queryline, params = None, bexit=True):
+def prepare(db, queryline, params = None, bexit=True, commit=True):
     #print queryline
     if db == None: return ()
     try:
@@ -22,12 +22,13 @@ def prepare(db, queryline, params = None, bexit=True):
         ret = None
         for row in cur:
             ret = row
-        db.commit()
+        if commit:
+            db.commit()
         cur.close()            
         return ret
     except:
         db.rollback()
-        sys.stderr.write( "DBError: %s\t%s\n" % ( queryline, sys.exc_info()))
+        print >>sys.stderr, "DBError: %s\t%s" % ( queryline, sys.exc_info() )
         if bexit:
             sys.exit()
     return None
