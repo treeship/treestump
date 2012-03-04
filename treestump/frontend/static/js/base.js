@@ -43,6 +43,7 @@ function removeDiv() {
 }
 
 function backgroundtext(text) {
+ $('#background-text').html('');
  $('#background-text').append(text);
  $('#background-text').append(text);
  $('#background-text').append(text);

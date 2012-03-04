@@ -1,15 +1,12 @@
 body {
   font: 100% Helvetica, Arial;
   background-color: #FEFEFE;
-  background-repeat: no-repeat; 
+  background-repeat: no-repeat;
+  margin: 0;
 }
 
 #background-text {
   text-align: justify;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
 }
 
 img {
@@ -34,9 +31,6 @@ img {
 #headline {
   color: #ffffff;
   background-color: #000000;
-  position: absolute;
-  top: 0px;
-  left: 0px;
   height: 190px;
   width: 100%;
 }

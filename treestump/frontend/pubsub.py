@@ -68,7 +68,7 @@ class Publisher(object):
       print 'Pub(%s) @%s' % (self.key, self.query_time)
       data, next_time = DG.query(self.key[0],
                                  self.key[1],
-                                 1.0,
+                                 0.2,  # degrees!
                                  self.query_time)
       print 'Pub(%s) got %s @%s' % (self.key, len(data), next_time)
       if data:
