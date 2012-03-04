@@ -13,19 +13,88 @@ body {
 	margin:0;
 	width:100%;
 	height:100%;
+	background: black;
+/*	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='', sizingMethod='image/scale/crop');*/
 }
-#overlay {
+.item {
+	width: 100%;
+	height: 100%;
 	position: absolute;
+	margin: 0px;
+	padding: 0px;
+}
+.overlay {
+	position: absolute;
+	font-size: 200pt;
+	color: steelblue;
+}
+.right {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	font-size: 100pt;
+	color: white;
+	text-align: right;
+}
+.botright {
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	font-size: 100pt;
+	color: white;
+	font-family: helvetica;
+}
+
+img {
+	height: 100%;
 }
  </style>
+
+ <script type="text/javascript">
+function additem(url, title, time, bottext) {
+	var item = $("<div></div>").addClass('item');
+	var ov = $("<div></div>").addClass('overlay');
+	var img = $("<img></img>").attr('src', url);
+	var tit = $("<div></div>").text(title);
+	var tim = $("<div></div>").text(time);
+	var r = $("<div></div>").addClass('right').append(tit, tim);
+	var br = $("<div></div>").addClass('botright').text(bottext)
+	item.append(ov, img, r, br).hide();
+	$("body").append(item);
+	return item.fadeIn(1000);
+
+}
+function test() {
+	item = additem("http://distilleryimage7.instagram.com/3e917a22654b11e180c9123138016265_7.jpg", "@penis", "3PM", 'shithole!');
+	setTimeout(function(){hideit(item)}, 3000);
+}
+
+function hideit(item) {
+	item.fadeOut(1000);
+	setTimeout(test, 1000);
+}
+
+
+$(document).ready(function() {
+	test();
+});
+ </script>
 </head>
 
 <body>
 
-<div id="overlay">foo</div>
+<!--<div class="item">
+<div class="overlay"></div>
 <img height="100%" src="http://distilleryimage7.instagram.com/3e917a22654b11e180c9123138016265_7.jpg"></img>
-
-
+<div class="right">
+	<div>@penis</div>
+	<div>3pm</div>
+</div>
+<div class="botright">
+shit hole!!
+</div>
+</div>
+-->
 
 </body>
 
