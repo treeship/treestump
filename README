@@ -1,5 +1,11 @@
 
-Python libraries used
+# database setup
+
+createdb angelhack
+psql -f TREESTUMP/treestump/ddl/create.ddl
+
+
+# Python libraries used
 
 
 pip install readability
