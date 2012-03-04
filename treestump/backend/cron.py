@@ -128,7 +128,7 @@ class APICron(object):
                         else:
                             print "imported ", data[:4]
                     except Exception as e:
-                        print >>sys.stderr, "ERROR\t", reader.name, '\t', e
+                        print >>sys.stderr, "ERROR\t", reader.reader.name, '\t', e
                         pass
 
                 reader.update_timer(nerrs, n)
@@ -142,14 +142,7 @@ class APICron(object):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('lat')
-    parser.add_argument('lon')
-    parser.add_argument('db')
-    args = parser.parse_args()
-
-    lat, lon = float(args.lat), float(args.lon)
-    cron = APICron(args.db)
+    cron = APICron(DBNAME)
     #cron.add_source(lat, lon)
     try:
         while True:

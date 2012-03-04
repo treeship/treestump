@@ -15,6 +15,10 @@ psql -d angelhack -f treestump/ddl/create.ddl
 DBUSER=<your username>
 DBPORT=<port of your postgresql, probably 5432>
 
+# Running Cron
+
+python cron.py
+
 # Python libraries used
 
 pip install readability

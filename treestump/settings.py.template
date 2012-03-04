@@ -3,7 +3,7 @@
 
 # Database Information
 DBNAME = 'angelhack'
-DBUSER = 'sirrice'
+DBUSER = ''
 DBPORT = 5432
 
 # Twitter
