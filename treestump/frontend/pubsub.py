@@ -45,7 +45,7 @@ class Publisher(object):
 
   def addsub(self, sub):
     # serve the subscriber the cached data
-    data = simplejson.dumps(self.cache)
+    data = simplejson.dumps(list(self.cache))
     sub.queue.put(data)
     self.subs.add(sub)
 
@@ -127,7 +127,7 @@ class Subscriber(object):
       return
 
     # For now, let's drop the current subscriptions.
-    close()
+    self.close()
     Publisher.register(key, self)
 
 
