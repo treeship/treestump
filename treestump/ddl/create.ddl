@@ -33,3 +33,19 @@ key varchar(1024),
 val varchar(1024)
 );
 create index m_id on metadata(id);
+
+drop table scrapers;
+create table scrapers (
+id serial,
+lat float,
+lon float,
+radius float
+);
+
+drop table pendingqs;
+create table pendingqs (
+id serial,
+lat float,
+lon float,
+radius float
+);

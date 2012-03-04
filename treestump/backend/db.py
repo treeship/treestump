@@ -19,21 +19,24 @@ def prepare(db, queryline, params = None, bexit=True, commit=True):
     if db == None: return ()
     try:
         cur = db.cursor()
-        if params:
+        if params is not None:
             cur.execute(queryline, params)
         else:
             cur.execute(queryline)
         ret = None
-        for row in cur:
-            ret = row
+        try:
+            for row in cur:
+                ret = row
+        except:
+            pass
         if commit:
             db.commit()
         cur.close()            
         return ret
     except:
         db.rollback()
-        print >>sys.stderr, "DBError: %s" % sys.exc_info() 
-        #print >>sys.stderr, "DBError: %s\t%s" % ( queryline, sys.exc_info() )
+        #print >>sys.stderr, "DBError: %s" % sys.exc_info() 
+        print >>sys.stderr, "DBError: %s\t%s" % ( queryline, sys.exc_info() )
         if bexit:
             sys.exit()
     return None
