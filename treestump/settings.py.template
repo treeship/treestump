@@ -4,6 +4,7 @@
 # Database Information
 DBNAME = 'angelhack'
 DBUSER = ''
+DBHOST = 'localhost'
 DBPORT = 5432
 
 # Twitter

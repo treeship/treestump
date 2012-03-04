@@ -123,6 +123,10 @@ app = Flask(__name__)
 def index():
   return render_template('index.html')
 
+@app.route('/eugene')
+def eugene():
+  return render_template('eugene.html')
+
 @app.route('/query')
 def query():
   if request.environ.get('wsgi.websocket'):

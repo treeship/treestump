@@ -11,7 +11,7 @@ def connect(dbname):
     try:
         if not dbname:
           dbname = DBNAME
-        connection = "dbname='%s' user='%s' port='%d'" % (dbname, DBUSER, DBPORT)
+        connection = "dbname='%s' host='%s' user='%s' port='%d'" % (dbname, DBHOST, DBUSER, DBPORT)
         db = psycopg2.connect(connection)
     except:
         sys.stderr.write( "couldn't connect\n")
