@@ -110,6 +110,8 @@ if __name__ == '__main__':
     rows, maxtime = dg.query(40.740512, -73.991479, 1, None)
     for d in rows:
         print '\t', d.keys()
-    rows, maxtime = dg.query(40.740512, -75.991479, 0.01, None)
+    rows, maxtime = dg.query(42.3647559, -71.1032591, 1.0, None)
     for d in rows:
         print '\t', d.keys()
+    rows, maxtime = dg.query(42.3647559, -71.1032591, 1.0, maxtime)
+    print len(rows)

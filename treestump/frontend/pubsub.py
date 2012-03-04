@@ -42,7 +42,7 @@ class Publisher(object):
 
   def serve(self):
     while self.subs:
-      data = self.scrape()
+      data = self.scrape()  # blocking call
       for s in self.subs:
         s.queue.put(data)
     # remove self
@@ -51,13 +51,15 @@ class Publisher(object):
   def scrape(self):
     ## Fetch the data for that self.key.
     while True:
+      print 'asking for ', self.query_time
       data, next_time = DG.query(self.key[0],
                                  self.key[1],
                                  1.0,
                                  self.query_time)
+      print 'got', data, next_time
       if data:
         break
-      sleep(0.1) # wait for data for 100ms
+      sleep(1.0) # wait for data for 100ms
     self.query_time = next_time
     # convert to primitive types for simplejson
     for d in data:
