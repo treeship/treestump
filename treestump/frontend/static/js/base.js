@@ -44,14 +44,28 @@ function removeDiv() {
 
 function backgroundtext(text) {
   $('#background-text').html('');
-  for (var i = 0; i < 50; ++i) {
-    $('#background-text').append(text);
+  var bam = "";
+  for (var i = 0; i < 1000; ++i) {
+    bam += text + " ";
   }
+  $('#background-text').append(bam);
 }
 
 function get_hashtags(location) {
+  function sort_fun(a, b) {
+    return b["count"] - a["count"];
+  }
   $.get('/tweets', location, function(data) {
-    backgroundtext(data);
+    data = JSON.parse(data);
+    var tags = Array();
+    for (var key in data) {
+      if (data.hasOwnProperty(key)) {
+        var count = data[key];
+        tags.push({"hashtag":key, "count":count});
+      }
+    }
+    tags.sort(sort_fun);
+    backgroundtext(tags[0]["hashtag"]);
   });
 }
 

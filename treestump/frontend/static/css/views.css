@@ -10,7 +10,8 @@ body {
   top: 0px;
   left: 0px;
   text-align: justify;
-  color: gray;
+  color: #777;
+  font-size: 34px;
   z-index: -1;
 }
 
