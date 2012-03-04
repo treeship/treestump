@@ -11,9 +11,9 @@ from frontend.patch import PatchReader
 
 
 DBNAME = 'angelhack'
-EVENTINSERT = "insert into events values(DEFAULT, %s, %s, %s, %s, DEFAULT, %s, %s, %s) returning id"
+EVENTINSERT = "insert into events values(DEFAULT, %s, %s, %s, %s, %s, DEFAULT, %s, %s, %s) returning id"
 IMGINSERT = "insert into events values(DEFAULT, %s, %s, %s) returning id"
-
+MDINSERT = "insert into metadata values (DEFAULT, %s, %s, %s) returning id"
 deduphack = set()
 
 
@@ -27,18 +27,26 @@ def get_hash(*data, **kwargs):
     return hash(data)
     
 
-def add_data(db, tag, lat, lon, time, title, shorttxt, fulltxt, imgurls):
-    hashval = get_hash(tag, lat, lon, title, shorttxt, fulltxt)
-    print hashval
-    params = (hashval, lat, lon, time, title, shorttxt, fulltxt)
-    ret = prepare(db, EVENTINSERT, params = params)
-    if ret is None: return None, None
-    eid = ret[0]
+def add_data(db, tag, lat, lon, time, title, shorttxt, fulltxt, imgurls, metadata={}):
+    try:
+        hashval = get_hash(tag, lat, lon, title, shorttxt, fulltxt)
+        print hashval
+        params = (hashval, tag, lat, lon, time, title, shorttxt, fulltxt)
+        ret = prepare(db, EVENTINSERT, params = params, commit=False)
+        if ret is None: return None, None
+        eid = ret[0]
 
-    imgids = []
-    for imgurl in imgurls:
-        imgids.append( prepare(db, IMGINSERT, (eid, imgurl, None)) )
-    return eid, imgids
+        imgids = []
+        for imgurl in imgurls:
+            imgids.append( prepare(db, IMGINSERT, (eid, imgurl, None), commit=False) )
+        mdids = []
+        for key, val in metadata.items():
+            mdids.append( prepare(db, MDINSERT, (eid, key, val), commit=False) )
+
+        db.commit()
+        return eid, imgids
+    except:
+        return None, None
 
 if __name__ == '__main__':
 
