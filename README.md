@@ -23,7 +23,7 @@ python cron.py
 
 pip install readability
 pip install requests
-pip install python-twitter foursquare instagram
+pip install python-twitter foursquare python-instagram
 
 http://code.google.com/p/python-twitter/
 https://github.com/joet3ch/foursquare-python

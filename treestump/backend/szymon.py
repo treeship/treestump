@@ -60,12 +60,12 @@ class DataGatherer(object):
 
                 md = self.get_metadata(eid)
                 d.update(md)
-
+                #print d
                 ret.append( d )
-            return ret, maxinstime
+            return (ret, maxinstime)
         except Exception as e:
             print e
-            return [], None
+        return ([], None)
 
     def get_events(self, lat, lon, radius, min_insert_time, source):
         where = []
@@ -107,7 +107,9 @@ class DataGatherer(object):
 if __name__ == '__main__':
 
     dg = DataGatherer('angelhack')
-    for d in dg.query(40.740512, -73.991479, 1, None):
+    rows, maxtime = dg.query(40.740512, -73.991479, 1, None)
+    for d in rows:
         print '\t', d.keys()
-    for d in dg.query(40.740512, -73.991479, 1, None):
+    rows, maxtime = dg.query(40.740512, -75.991479, 0.01, None)
+    for d in rows:
         print '\t', d.keys()
