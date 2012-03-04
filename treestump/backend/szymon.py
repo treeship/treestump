@@ -43,8 +43,9 @@ class DataGatherer(object):
     def run_query(self, lat, lon, radius, min_insert_time, source=None):
         try:
             ret = []
+            maxinstime = None
             for data in self.get_events(lat, lon, radius, min_insert_time, source):
-                eid, source, lat, lon, time, title, shorttxt, fulltxt = data
+                eid, source, lat, lon, time, lastinstime, title, shorttxt, fulltxt = data
                 urls = self.get_imgs(eid)
 
                 d = {'latlon': (lat, lon),
@@ -54,15 +55,17 @@ class DataGatherer(object):
                      'shorttxt' : shorttxt,
                      'fulltxt' : fulltxt,
                      'imgurls' : tuple(urls)}
+                if maxinstime is None or maxinstime < lastinstime:
+                    maxinstime = lastinstime
 
                 md = self.get_metadata(eid)
                 d.update(md)
 
                 ret.append( d )
-            return ret
+            return ret, maxinstime
         except Exception as e:
             print e
-            return []
+            return [], None
 
     def get_events(self, lat, lon, radius, min_insert_time, source):
         where = []
@@ -77,7 +80,7 @@ class DataGatherer(object):
             where.append( "source = %s" )
             params.append( source )
 
-        sql = '''select id, source, lat, lon, time, title, shorttxt, fulltxt
+        sql = '''select id, source, lat, lon, time, addtime, title, shorttxt, fulltxt
         from events where %s
         order by addtime asc limit 30''' % ' and '.join(where)
 
