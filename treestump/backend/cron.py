@@ -35,6 +35,8 @@ def add_data(db, tag, lat, lon, time, title, shorttxt, fulltxt, imgurls, metadat
         eid = ret[0]
 
         imgids = []
+        if imgurls is None:
+            imgurls = []
         for imgurl in imgurls:
             imgid = prepare(db, IMGINSERT, (eid, imgurl, None), commit=False)
             if imgid:
@@ -56,6 +58,7 @@ if __name__ == '__main__':
     from scrapers.tweets import TwitterReader
     from scrapers.foursquare import FoursquareVenueReader
     from scrapers.yelp import YelpReader
+    from datetime import datetime, timedelta
 
     parser = argparse.ArgumentParser()
     parser.add_argument('lat')
@@ -65,28 +68,48 @@ if __name__ == '__main__':
 
     lat, lon = float(args.lat), float(args.lon)
 
+    MINDELAY = 2
     sources = [ PatchReader, InstagramReader, TwitterReader,
                 FoursquareVenueReader, YelpReader]
-    readers = map(lambda s: s(lat, lon), sources)
+    readers = dict( map(lambda s: (s(lat, lon), (MINDELAY, datetime.now())), sources) )
+    
 
     db = connect(args.db)
 
     try:
         while True:
-            for reader in readers:
+            now = datetime.now()
+            for reader, (delay, nexttime) in readers.items():
+                if nexttime > now:
+                    print "skipped", now, nexttime
+                    continue
+                
                 try:
+                    nerrs, n = 0.0, 0.0
                     for data in reader:
+                        n += 1
                         try:
                             eid, imgids = add_data(db, reader.name, *data)
                             if eid is None:
+                                nerrs += 1
                                 raise Exception( "Error with %s" % '\t'.join(map(str, data[:4])) )
                             else:
                                 print "imported ", data[:4]
                         except Exception as e:
                             print >>sys.stderr, "ERROR\t", reader.name, '\t', e
+                            pass
+
+                    frac = nerrs / (n + 1.0)
+                    if frac > 0.7:
+                        delay *= 1.5
+                    elif nerrs > 2:
+                        delay = MINDELAY
+                    readers[reader] = (delay, now + timedelta(seconds=delay) )
+                    
+                    print "DELAY", delay
                 except Exception as e:
                     print >>sys.stderr, "ERROR\t", reader.name, '\t', e
-            time.sleep(2)
+            time.sleep(1)
 
     except KeyboardInterrupt:
         print "see ya!"

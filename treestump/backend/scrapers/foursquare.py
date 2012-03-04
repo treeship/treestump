@@ -22,7 +22,7 @@ class FoursquareVenueReader:
         for v in venues:
             try:
                 title = v.name
-                yield self.lat, self.lon, datetime.now(), v.name, None, None, None
+                yield self.lat, self.lon, datetime.now(), v.name, None, None, []
             except Exception as e:
                 print e
                 pass

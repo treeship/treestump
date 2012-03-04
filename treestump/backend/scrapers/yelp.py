@@ -93,14 +93,9 @@ class YelpReader():
                            settings.YELP_CONSUMER_SECRET,
                            settings.YELP_TOKEN,
                            settings.YELP_TOKEN_SECRET)
-
-        businesses = response['businesses']
-        total = response['total']
-
-        ids = []
-        for b in businesses:
-            #print b['id']
-            ids.append(b['id'])
+        
+        businesses = response.get('businesses', [])
+        ids = [b['id'] for b in businesses]
 
         return ids
 

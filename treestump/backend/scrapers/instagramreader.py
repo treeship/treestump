@@ -22,18 +22,21 @@ class InstagramReader(object):
         #api.location_search(lat=self.lat, lng=self.lon)
         nearby_media = api.media_search(lat=self.lat, lng=self.lon)
         for media in nearby_media:
-            url = media.get_standard_resolution_url()
-            user = media.user
-            loc = media.location
-            mlat, mlon = loc.point.latitude, loc.point.longitude
-            time = media.created_time
-            title = media.caption and media.caption.text or ''
-            metadata = {'locname' : loc.name,
-                        'likes' : media.like_count,
-                        'filter' : media.filter,
-                        'fullname' : user.full_name,
-                        'userpic' : user.profile_picture}
-            yield mlat, mlon, time, title, None, None, [url], metadata
+            try:
+                url = media.get_standard_resolution_url()
+                user = media.user
+                loc = media.location
+                mlat, mlon = loc.point.latitude, loc.point.longitude
+                time = media.created_time
+                title = media.caption and media.caption.text or ''
+                metadata = {'locname' : loc.name,
+                            'likes' : media.like_count,
+                            'filter' : media.filter,
+                            'fullname' : user.full_name,
+                            'userpic' : user.profile_picture}
+                yield mlat, mlon, time, title, None, None, [url], metadata
+            except:
+                continue
 
     def __iter__(self):
         return self.next()
