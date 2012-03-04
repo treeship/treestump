@@ -5,6 +5,7 @@ body {
 }
 
 #background-text {
+  text-align: justify;
   position: absolute;
   top: 0;
   left: 0;
@@ -22,6 +23,7 @@ img {
 }
 
 #icon img {
+  background-color: #000000;
   position: absolute;
   bottom: 0;
   right: 0;
@@ -29,27 +31,27 @@ img {
   padding: 10 10 10 10;
 }
 
-.header {
-  background-color: #000000;
-}
-
-#headline h2 {
+#headline {
   color: #ffffff;
   background-color: #000000;
   position: absolute;
   top: 0px;
   left: 0px;
-  height: 100px;
+  height: 190px;
+  width: 100%;
+}
+
+.text_view img {
   width: 100%;
 }
 
 .text_view {
   background-color: #802080;
-  opacity: 0.6;
+  opacity: 0.9;
   padding: 0 0 0 0;
   margin: 10 10 10 10;
   box-shadow: 10px 10px 5px #FFFFFF;
-  width: 400px;
+  width: 20%;
   float: left;
   position: relative;
 }
@@ -59,6 +61,7 @@ img {
   top: 0;
   left: 0;
   z-index: -1;
+  visibility: hidden;
 }
 
 .photo_view {
@@ -68,7 +71,7 @@ img {
   z-index: -1;
 }
 
-h1, h2, h3, h4 { color: #F0F0F0; padding: 10 0 10 30;}
+h1, h2, h3, h4, h5 { color: #F0F0F0; padding: 10 10 10 30;}
 h1 { font-size: 72px; }
 h2 { font-size: 48px; }
 h3 { font-size: 32px; }
