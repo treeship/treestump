@@ -89,10 +89,25 @@ class APICron(object):
         self.db = connect(dbname)
 
     def add_source(self, lat, lon):
+        print "ADDING SOURCE", lat, lon
         for source in self.sources:
             self.readers.append(APIReader(source(lat, lon)))
 
+    def check_queries(self):
+        try:
+            toadd = [row for row in query(self.db, 'select id, lat, lon from pendingqs')]
+            for id, lat, lon in toadd:
+                self.add_source(lat, lon)
+                prepare(self.db, 'delete from pendingqs where id = %s', (id,), commit=False)
+            commit=True
+        except Exception as e:
+            print 'check_queries error', e
+
+
     def run(self):
+        # check to see if i should add scrapers
+        self.check_queries()
+        
         now = datetime.now()
         for reader in self.readers:
             if not reader.should_scrape():
@@ -113,7 +128,7 @@ class APICron(object):
                         else:
                             print "imported ", data[:4]
                     except Exception as e:
-                        print >>sys.stderr, "ERROR\t", reader.name, '\t', e
+                        print >>sys.stderr, "ERROR\t", reader.reader.name, '\t', e
                         pass
 
                 reader.update_timer(nerrs, n)
@@ -127,15 +142,8 @@ class APICron(object):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('lat')
-    parser.add_argument('lon')
-    parser.add_argument('db')
-    args = parser.parse_args()
-
-    lat, lon = float(args.lat), float(args.lon)
-    cron = APICron(args.db)
-    cron.add_source(lat, lon)
+    cron = APICron(DBNAME)
+    #cron.add_source(lat, lon)
     try:
         while True:
             cron.run()

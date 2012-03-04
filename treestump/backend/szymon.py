@@ -15,13 +15,37 @@ class DataGatherer(object):
 
     def __init__(self, dbname):
         self.db = connect(dbname)
+
+    def check_query(self, lat, lon, radius):
+        params = (lat, lon, radius) 
+        sql = "select count(*) from scrapers where (((lat - %s)^2) + ((lon - %s)^2))^0.5 < %s;"
+        nhits = 0
+        for row in query(self.db, sql, params):
+            nhits +=  row[0]
+        if nhits == 0:
+            sql = "select count(*) from pendingqs where (((lat - %s)^2) + ((lon - %s)^2))^0.5 < %s;"
+            nfound = 0
+            for row in query(self.db, sql, params):
+                nfound +=  row[0]
+            if nfound == 0:
+                print "ADDING PENDING QUERY"
+                sql = "insert into pendingqs values (DEFAULT, %s, %s, %s);"
+                prepare(self.db, sql, params=params, commit=True)
     
 
     def query(self, lat, lon, radius, min_insert_time, source=None):
+        # check if scrapers exist
+        self.check_query(lat, lon, radius)
+
+        return self.run_query(lat, lon, radius, min_insert_time, source=None)
+
+
+    def run_query(self, lat, lon, radius, min_insert_time, source=None):
         try:
             ret = []
+            maxinstime = None
             for data in self.get_events(lat, lon, radius, min_insert_time, source):
-                eid, source, lat, lon, time, title, shorttxt, fulltxt = data
+                eid, source, lat, lon, time, lastinstime, title, shorttxt, fulltxt = data
                 urls = self.get_imgs(eid)
 
                 d = {'latlon': (lat, lon),
@@ -31,15 +55,17 @@ class DataGatherer(object):
                      'shorttxt' : shorttxt,
                      'fulltxt' : fulltxt,
                      'imgurls' : tuple(urls)}
+                if maxinstime is None or maxinstime < lastinstime:
+                    maxinstime = lastinstime
 
                 md = self.get_metadata(eid)
                 d.update(md)
 
                 ret.append( d )
-            return ret
+            return ret, maxinstime
         except Exception as e:
             print e
-            return []
+            return [], None
 
     def get_events(self, lat, lon, radius, min_insert_time, source):
         where = []
@@ -54,7 +80,7 @@ class DataGatherer(object):
             where.append( "source = %s" )
             params.append( source )
 
-        sql = '''select id, source, lat, lon, time, title, shorttxt, fulltxt
+        sql = '''select id, source, lat, lon, time, addtime, title, shorttxt, fulltxt
         from events where %s
         order by addtime asc limit 30''' % ' and '.join(where)
 
@@ -82,4 +108,6 @@ if __name__ == '__main__':
 
     dg = DataGatherer('angelhack')
     for d in dg.query(40.740512, -73.991479, 1, None):
-        print d
+        print '\t', d.keys()
+    for d in dg.query(40.740512, -73.991479, 1, None):
+        print '\t', d.keys()
