@@ -22,6 +22,7 @@ python cron.py
 
 # Python libraries used
 
+pip install django  # unless you already have it
 pip install argparse
 pip install requests
 pip install python-twitter foursquare python-instagram

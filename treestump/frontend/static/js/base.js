@@ -28,4 +28,9 @@ $(document).ready(function() {
     // TODO: process the incoming data and display it nicely.
     $('#output').append(msg.data + '<br>')
   };
+
+  websocket.onerror = function (evt) {
+    $('#output').html('DISCONNECTED');
+    // TODO: should reconnect and re-query
+  }
 });
