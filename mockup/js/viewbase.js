@@ -31,7 +31,7 @@ function createNewDiv(imgurl, partext) {
 }
 
 function removeDiv() {
-  var maxNum = 5;
+  var maxNum = 2;
   var allelements = $('.text_view');
   var allids = $.map(allelements, function(lel, index) {return lel.id});
   if (allids.length > (maxNum-1)) {
@@ -55,5 +55,5 @@ $(document).ready(function() {
   window.setTimeout('backgroundtext()', 100);
   window.setTimeout('insertFieldAddress()', 500);
   window.setTimeout('insertPermanentHeadline()', 1000);
-  window.setTimeout("../css/00.jpg", "THIS IS COMPLETELY NEW")', 1500);
+  window.setTimeout('createNewDiv("../css/00.jpg", "THIS IS COMPLETELY NEW")', 1500);
 });
