@@ -59,7 +59,7 @@ class Publisher(object):
 
   def scrape(self):
     ## Fetch the data for that self.key.
-    while True:
+    while self.subs:
       print 'asking for ', self.query_time
       data, next_time = DG.query(self.key[0],
                                  self.key[1],
