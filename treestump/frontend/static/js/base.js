@@ -7,12 +7,12 @@ function insertPermanentHeadline(headline) {
  $('#headline > h2').html(headline);
 }
 
-function createNewDiv(imgurl, partext) {
-  removeDiv();
-  window.setTimeout(function (){ addDiv(imgurl, partext) }, 1000);
-}
+var things_to_add = Array();
 
-function addDiv(imgurl, partext) {
+function addDiv() {
+  var thing = things_to_add.shift();
+  var imgurl = thing["img"];
+  var partext = thing["title"];
   var imgurlhtml='';
   var partexthtml='';
   //<div class="text_view" id="0">
@@ -30,15 +30,28 @@ function addDiv(imgurl, partext) {
   var added = $(newhtml);
   added.hide();
   $('#overlayB').append(added);
-  $(added).fadeIn();
+  $(added).fadeIn('slow', function() {
+    if (things_to_add.length > 0) {
+      removeThenAdd();
+    }
+  });
 }
 
-function removeDiv() {
+function removeThenAdd() {
   var maxNum = 5;
-  var allelements = $('.text_view');
+  var allelements = $('#overlayB').children();
   if (allelements.size() > (maxNum-1)) {
     var removed = $(allelements[0]);
-    removed.fadeOut('slow', function() { removed.remove()});
+    removed.fadeOut('slow', function() { removed.remove(); window.setTimeout(addDiv, 1000); });
+  } else {
+    addDiv();
+  }
+}
+
+function new_element(imgurl, title) {
+  things_to_add.push({'img': imgurl, 'title': title });
+  if (things_to_add.length == 1) {
+    removeThenAdd();
   }
 }
 
@@ -95,7 +108,7 @@ function start_fetching(address) {
       var imgurl = '';
       if (d.imgurls.length > 0)
         imgurl = d.imgurls[0];
-      createNewDiv(imgurl, d.title);
+      new_element(imgurl, d.title);
     }
   };
 
