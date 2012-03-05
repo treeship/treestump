@@ -45,7 +45,7 @@ class Publisher(object):
     # ask for data from the last minute
     self.query_time = None # datetime.now() - timedelta(minutes = 1)
     # last 20 results so that we have something to show to new subs
-    self.cache = deque(maxlen=20)
+    self.cache = deque(maxlen=10)
 
   def addsub(self, sub):
     # serve the subscriber the cached data

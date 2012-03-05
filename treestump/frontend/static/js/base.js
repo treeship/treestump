@@ -8,8 +8,20 @@ function insertPermanentHeadline(headline) {
 }
 
 var things_to_add = Array();
+var currently_adding = false;
+
+function process_things_to_add() {
+  if (currently_adding)
+    return;
+  if (things_to_add.length == 0)
+    return;
+  currently_adding = true;
+  addNewItem();
+}
 
 function addDiv() {
+  if (things_to_add.length == 0)
+    return;
   var thing = things_to_add.shift();
   var imgurl = thing["img"];
   var partext = thing["title"];
@@ -32,17 +44,22 @@ function addDiv() {
   $('#overlayB').append(added);
   $(added).fadeIn('slow', function() {
     if (things_to_add.length > 0) {
-      removeThenAdd();
+      window.setTimeout(addNewItem, 1000);
+    } else {
+      currently_adding = false;
     }
   });
 }
 
-function removeThenAdd() {
+function addNewItem() {
   var maxNum = 5;
   var allelements = $('#overlayB').children();
   if (allelements.size() > (maxNum-1)) {
     var removed = $(allelements[0]);
-    removed.fadeOut('slow', function() { removed.remove(); window.setTimeout(addDiv, 1000); });
+    removed.fadeOut('slow', function() {
+      removed.remove();
+      addDiv();
+    });
   } else {
     addDiv();
   }
@@ -50,9 +67,7 @@ function removeThenAdd() {
 
 function new_element(imgurl, title) {
   things_to_add.push({'img': imgurl, 'title': title });
-  if (things_to_add.length == 1) {
-    removeThenAdd();
-  }
+  process_things_to_add();
 }
 
 function backgroundtext(text) {
