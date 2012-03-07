@@ -30,8 +30,10 @@ class TwitterReader:
     name = property(lambda self:"Twitter")
 
     def next(self):
-        tweets = good_tweets(popular_hashtags(self.lat, self.lon))
-        for tweet in tweets[0]:
+        tt, x = good_tweets(popular_hashtags(self.lat, self.lon))
+        tweets = list(tt)
+        tweets.extend(local_tweets(self.lat, self.lon))
+        for tweet in tweets:
             try:
                 title = tweet.text
                 time = tweet.GetCreatedAt()
@@ -83,6 +85,11 @@ def popular_hashtags(lat, long):
                     hashtags[h] = 1
     return hashtags
     
+
+def local_tweets(lat, long):
+    tweets = twitter_call("the", (lat,long,radius))
+    return tweets
+
 def parse_hashtags(text):
     hashtags = []
     idx = text.find('#')
@@ -112,5 +119,7 @@ def run():
 if __name__ == '__main__':
     if len(sys.argv) > 2:
         print good_tweets(popular_hashtags(float(sys.argv[1]), float(sys.argv[2])))
+        print "LOCAL: "
+        print local_tweets(float(sys.argv[1]), float(sys.argv[2]))
     else:
         print run()
