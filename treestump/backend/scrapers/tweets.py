@@ -104,6 +104,9 @@ def good_tweets(hashtags):
     return good, max
         
 def run():
+    x, max = good_tweets(popular_hashtags(cambridge_lat, cambridge_long))
+    for tweet in x:
+        print tweet.user.screen_name, tweet.text
     return good_tweets(popular_hashtags(cambridge_lat, cambridge_long))
 
 if __name__ == '__main__':
